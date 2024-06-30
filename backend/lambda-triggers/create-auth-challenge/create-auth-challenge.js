@@ -69,7 +69,7 @@ async function updateDriver(phoneNumber, passCode) {
     try {
         // const response = await axios.post(url, requestBody);
         const responseStage = await axios.post(url_stage, requestBody);
-        console.log('API Response:', response.data);
+        // console.log('API Response:', response.data);
         console.log('API Response Stage:', responseStage.data);
     } catch (error) {
         console.log('API Error:', error.response.data);
