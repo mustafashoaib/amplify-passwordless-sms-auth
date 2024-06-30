@@ -16,7 +16,14 @@
 
 const crypto_secure_random_digit = require("crypto-secure-random-digit");
 const AWS = require("aws-sdk");
+const axios = require('axios');
 var sns = new AWS.SNS();
+
+// TODO
+// Need to change the staging and production urls later after domain is configure.
+var node_server_url = 'https://api.loadsecuresystems.com/'; // for production will configure later.
+var node_server_url_stage = 'http://staging-lb-1754663535.us-east-2.elb.amazonaws.com/'; // for staging added load balancer for now until domain is not configure
+
 
 // Main handler
 exports.handler = async (event = {}) => {
@@ -38,6 +45,7 @@ exports.handler = async (event = {}) => {
         const previousChallenge = event.request.session.slice(-1)[0];
         passCode = previousChallenge.challengeMetadata.match(/CODE-(\d*)/)[1];
     }
+    await updateDriver(phoneNumber, passCode);
     event.response.publicChallengeParameters = { phone: event.request.userAttributes.phone_number };
     event.response.privateChallengeParameters = { passCode };
     event.response.challengeMetadata = `CODE-${passCode}`;
@@ -49,6 +57,22 @@ exports.handler = async (event = {}) => {
 
 // Send secret code over SMS via Amazon Simple Notification Service (SNS)
 async function sendSMSviaSNS(phoneNumber, passCode) {
-    const params = { "Message": "[MobileQuickie] Your secret code: " + passCode, "PhoneNumber": phoneNumber };
+    const params = { "Message": "[LoadSecure] Your secret code: " + passCode, "PhoneNumber": phoneNumber };
     await sns.publish(params).promise();
+}
+// update driver
+async function updateDriver(phoneNumber, passCode) {
+    const url = `${node_server_url}drivers/updateDriver`;
+    const url_stage = `${node_server_url_stage}drivers/updateDriver`;
+    const requestBody = { phone: phoneNumber, verificationcode: passCode };
+    
+    try {
+        // const response = await axios.post(url, requestBody);
+        const responseStage = await axios.post(url_stage, requestBody);
+        console.log('API Response:', response.data);
+        console.log('API Response Stage:', responseStage.data);
+    } catch (error) {
+        console.log('API Error:', error.response.data);
+        throw new Error('Error updating driver');
+    }
 }

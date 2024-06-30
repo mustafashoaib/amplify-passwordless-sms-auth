@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "fms-driver-auth-pool"
+resolve_s3 = true
+s3_prefix = "fms-driver-auth-pool"
+region = "us-east-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "UserPoolName=\"fms-driver-pool\""
+image_repositories = []

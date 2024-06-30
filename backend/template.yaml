@@ -1,8 +1,7 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Passwordless SMS authentication backend using Amazon Cognito User Pools CUSTOM AUTH challenge flow w/ AWS Lambda triggers and Amazon SNS for sending SMS TOTP
-
+  Passwordless SMS authentication backend using Amazon Cognito User Pools
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: amplify-passwordless-sms-auth 
@@ -32,14 +31,14 @@ Resources:
     Properties:
       CodeUri: lambda-triggers/define-auth-challenge/
       Handler: define-auth-challenge.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
 
   CreateAuthChallenge:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambda-triggers/create-auth-challenge/
       Handler: create-auth-challenge.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -54,17 +53,17 @@ Resources:
     Properties:
       CodeUri: lambda-triggers/verify-auth-challenge-response/
       Handler: verify-auth-challenge-response.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
 
   PreSignUp:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambda-triggers/pre-sign-up/
       Handler: pre-sign-up.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
 
   UserPool:
-    Type: "AWS::Cognito::UserPool"
+    Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Ref UserPoolName
       Schema:
@@ -99,6 +98,7 @@ Resources:
       FunctionName: !GetAtt DefineAuthChallenge.Arn
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt UserPool.Arn
+
   CreateAuthChallengeInvocationPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -106,6 +106,7 @@ Resources:
       FunctionName: !GetAtt CreateAuthChallenge.Arn
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt UserPool.Arn
+
   VerifyAuthChallengeResponseInvocationPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -113,6 +114,7 @@ Resources:
       FunctionName: !GetAtt VerifyAuthChallengeResponse.Arn
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt UserPool.Arn
+
   PreSignUpInvocationPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -122,7 +124,7 @@ Resources:
       SourceArn: !GetAtt UserPool.Arn
 
   UserPoolClient:
-    Type: "AWS::Cognito::UserPoolClient"
+    Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName: sms-auth-client
       GenerateSecret: false
@@ -134,6 +136,7 @@ Outputs:
   UserPoolId:
     Description: ID of the User Pool
     Value: !Ref UserPool
+
   UserPoolClientId:
     Description: ID of the User Pool Client
     Value: !Ref UserPoolClient

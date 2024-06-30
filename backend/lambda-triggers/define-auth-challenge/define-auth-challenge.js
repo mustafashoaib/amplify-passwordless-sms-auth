@@ -8,7 +8,7 @@
 // For HOTP, TOTP, U2F, or WebAuthn flows, we'll always use 'CUSTOM_CHALLENGE' and this function code won't change between the various auth methods.
 
 // ### Next steps ###
-// Updated: June 12, 2020
+// Updated: Jan 6, 2020
 
 'use strict';
 
@@ -26,7 +26,6 @@ exports.handler = async (event) => {
     // User successfully answered the challenge, succeed with auth and issue OpenID tokens
     else if (event.request.session &&
         event.request.session.length &&
-        event.request.session.slice(-1)[0].challengeName === 'CUSTOM_CHALLENGE' &&
         event.request.session.slice(-1)[0].challengeResult === true) {
         
         console.log('The user provided the right answer to the challenge; succeed auth');
