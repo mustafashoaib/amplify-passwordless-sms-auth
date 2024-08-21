@@ -21,8 +21,8 @@ var sns = new AWS.SNS();
 
 // TODO
 // Need to change the staging and production urls later after domain is configure.
-var node_server_url = 'https://api.loadsecuresystems.com/'; // for production will configure later.
-var node_server_url_stage = 'http://staging-lb-1754663535.us-east-2.elb.amazonaws.com/'; // for staging added load balancer for now until domain is not configure
+var node_server_url = 'https://live.trackingplus.loadsecuresystems.com/'; // for production will configure later.
+var node_server_url_stage = 'https://api-trackingplus.loadsecuresystems.com/'; // for staging added load balancer for now until domain is not configure
 
 
 // Main handler
@@ -57,7 +57,7 @@ exports.handler = async (event = {}) => {
 
 // Send secret code over SMS via Amazon Simple Notification Service (SNS)
 async function sendSMSviaSNS(phoneNumber, passCode) {
-    const params = { "Message": "[LoadSecure] Your secret code: " + passCode, "PhoneNumber": phoneNumber };
+    const params = { "Message": "[TrackingPlus] Your secret code: " + passCode, "PhoneNumber": phoneNumber };
     await sns.publish(params).promise();
 }
 // update driver
@@ -67,9 +67,9 @@ async function updateDriver(phoneNumber, passCode) {
     const requestBody = { phone: phoneNumber, verificationcode: passCode };
     
     try {
-        // const response = await axios.post(url, requestBody);
+        const response = await axios.post(url, requestBody);
         const responseStage = await axios.post(url_stage, requestBody);
-        // console.log('API Response:', response.data);
+        console.log('API Response:', response.data);
         console.log('API Response Stage:', responseStage.data);
     } catch (error) {
         console.log('API Error:', error.response.data);
