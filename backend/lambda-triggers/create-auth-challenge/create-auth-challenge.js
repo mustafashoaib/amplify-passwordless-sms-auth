@@ -21,7 +21,7 @@ var sns = new AWS.SNS();
 
 // TODO
 // Need to change the staging and production urls later after domain is configure.
-var node_server_url = 'https://live.trackingplus.loadsecuresystems.com/'; // for production will configure later.
+var node_server_url = 'https://live-trackingplus.loadsecuresystems.com/'; // for production will configure later.
 var node_server_url_stage = 'https://api-trackingplus.loadsecuresystems.com/'; // for staging added load balancer for now until domain is not configure
 
 
